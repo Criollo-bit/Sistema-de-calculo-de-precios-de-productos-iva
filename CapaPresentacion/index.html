@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Capas</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Calculo de Precio Final Incluido iva al 15%</h1>
+
+        <div class="card">
+            <h3>Nuevo Producto</h3>
+            <div class="input-group">
+                <input type="text" id="nombreInput" placeholder="Nombre del producto">
+                <input type="number" id="precioInput" placeholder="Precio base ($)">
+                <button class="btn-primary" onclick="agregarProducto()">Guardar</button>
+            </div>
+            
+            <br>
+            <button class="btn-success" onclick="descargarArchivo()">Descargar TXT</button>
+        </div>
+
+        <div class="card">
+            <h3>Inventario (Base de Datos)</h3>
+            <ul id="listaResultados">
+                </ul>
+        </div>
+    </div>
+
+    <script src="../CapaDatos/BaseDeDatos.js"></script>
+    <script src="../CapaLogica/CalculadoraPrecios.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
