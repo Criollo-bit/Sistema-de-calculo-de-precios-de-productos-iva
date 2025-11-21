@@ -2,21 +2,39 @@ let gestorBD;
 let gestorLogica;
 
 window.onload = function() {
-    try {
-        gestorBD = new BaseDeDatos();
-        gestorLogica = new CalculadoraPrecios();
-        console.log("Sistema iniciado correctamente.");
-    } catch (error) {
-        console.error(error);
-        alert("Error grave: No se encuentran las clases 'BaseDeDatos' o 'CalculadoraPrecios'. Revisa si los nombres de las carpetas son correctos.");
-    }
+    gestorBD = new BaseDeDatos();
+    gestorLogica = new CalculadoraPrecios();
 };
-  //esto es por si no se cargan bien los archivos
-function agregarProducto() {
-    if (!gestorBD || !gestorLogica) {
-        alert("El sistema no se cargó bien. Revisa la consola (F12).");
+
+
+function previsualizarCalculo() {
+    const nombre = document.getElementById('nombreInput').value;
+    const precio = document.getElementById('precioInput').value;
+    const cajaPreview = document.getElementById('previewBox');
+
+    // Si no hay precio, ocultamos la caja de cálculo
+    if (precio === "") {
+        cajaPreview.style.display = "none";
         return;
     }
+
+    try {
+        const datos = gestorLogica.procesarProducto(nombre || "Producto", precio);
+
+        // Mostramos los resultados
+        cajaPreview.style.display = "block";
+        document.getElementById('prevBase').innerText = `$${datos.precioBase}`;
+        document.getElementById('prevIVA').innerText = `$${datos.iva}`;
+        document.getElementById('prevTotal').innerText = `$${datos.total}`;
+
+    } catch (error) {
+        // Si el precio es negativo ocultamos la preview
+        cajaPreview.style.display = "none";
+    }
+}
+
+function agregarProducto() {
+    if (!gestorBD || !gestorLogica) return;
 
     const nombre = document.getElementById('nombreInput').value;
     const precio = document.getElementById('precioInput').value;
@@ -27,13 +45,33 @@ function agregarProducto() {
     }
 
     try {
+        // SECCION LÓGICA
         const productoProcesado = gestorLogica.procesarProducto(nombre, precio);
+
+        // SECCION DATOS
         gestorBD.guardarProducto(productoProcesado);
+
+        // SECCION VISUAL
         renderizarLista();
+        mostrarNotificacion();
+        
+        // Limpiamos
         limpiarFormulario();
+
     } catch (error) {
         alert("Error: " + error.message);
     }
+}
+
+// Animación de Notificación
+function mostrarNotificacion() {
+    const toast = document.getElementById('notificacion');
+    toast.classList.add('mostrar');
+    
+    // Quitar la notificación después de 3 segundos
+    setTimeout(() => {
+        toast.classList.remove('mostrar');
+    }, 3000);
 }
 
 function renderizarLista() {
@@ -42,11 +80,18 @@ function renderizarLista() {
     
     const productos = gestorBD.obtenerTodos();
 
+    if (productos.length === 0) {
+        lista.innerHTML = '<li style="color: #999; justify-content: center;">La base de datos está vacía...</li>';
+        return;
+    }
+
     productos.forEach(p => {
         const item = document.createElement('li');
-        item.style.padding = "5px";
-        item.style.borderBottom = "1px solid #eee";
-        item.textContent = `${p.nombre} | Base: $${p.precioBase} | Total: $${p.total}`;
+        // Usamos iconos también en la lista
+        item.innerHTML = `
+            <span><i class="fas fa-box"></i> <b>${p.nombre}</b></span>
+            <span>Precio Final: <b style="color: #27ae60">$${p.total}</b></span>
+        `;
         lista.appendChild(item);
     });
 }
@@ -54,37 +99,22 @@ function renderizarLista() {
 function limpiarFormulario() {
     document.getElementById('nombreInput').value = "";
     document.getElementById('precioInput').value = "";
+    document.getElementById('previewBox').style.display = "none"; 
     document.getElementById('nombreInput').focus();
 }
 
-function descargarArchivo() {
-    //Pedimos los datos a la "Base de Datos"
+function descargarArchivo() { 
     const productos = gestorBD.obtenerTodos();
-    
-    if (productos.length === 0) {
-        alert("No hay datos para guardar.");
-        return;
-    }
+    if (productos.length === 0) { alert("Nada que descargar"); return; }
 
-    //Converto el Array a formato Texto (String)
-    let contenidoTexto = "--- REPORTE DE PRODUCTOS ---\n\n";
-    
+    let contenidoTexto = "--- INVENTARIO ---\n";
     productos.forEach(p => {
-        contenidoTexto += `PRODUCTO: ${p.nombre}\n`;
-        contenidoTexto += `PRECIO BASE: $${p.precioBase}\n`;
-        contenidoTexto += `TOTAL (con IVA): $${p.total}\n`;
-        contenidoTexto += "--------------------------\n";
+        contenidoTexto += `[${p.nombre}] - Total: $${p.total}\n`;
     });
 
-    //Creamos un "Blob" que es como un archivo simulado en memoria
-    const archivo = new Blob([contenidoTexto], { type: 'text/plain' });
-    
-    //Creamos un enlace invisible para descargarlo
+    const archivo = new Blob([contenidoTexto], { type: 'text/plain' }); 
     const enlace = document.createElement("a");
     enlace.href = URL.createObjectURL(archivo);
-    enlace.download = "BaseDeDatos_Productos.txt";
-    
-    // Hacemos clic automático y limpiamos
+    enlace.download = "Inventario.txt";
     enlace.click();
-    URL.revokeObjectURL(enlace.href);
-}
+} 

@@ -1,6 +1,6 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7f6; 
+    background-color: #f4f7f6;
     color: #333;
     display: flex;
     justify-content: center;
@@ -30,7 +30,7 @@ h3 {
 
 .card {
     background-color: white;
-    border-radius: 10px;      
+    border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     padding: 25px;
     margin-bottom: 20px;
@@ -38,8 +38,8 @@ h3 {
 
 .input-group {
     display: flex;
-    gap: 10px; 
-    flex-wrap: wrap; 
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 input {
@@ -53,7 +53,7 @@ input {
 
 input:focus {
     outline: none;
-    border-color: #3498db; 
+    border-color: #3498db;
 }
 
 button {
@@ -64,29 +64,28 @@ button {
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.1s, opacity 0.2s;
+    margin-top: 10px; 
 }
 
 button:active {
-    transform: scale(0.98); 
-}
-
-
-.btn-primary {
-    background-color: #3498db;
-    color: white;
-}
-
-.btn-success {
-    background-color: #2ecc71;
-    color: white;
-    margin-top: 10px; 
+    transform: scale(0.98);
 }
 
 button:hover {
     opacity: 0.9;
 }
 
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+    margin-right: 10px;
+}
 
+.btn-success {
+    background-color: #2ecc71;
+    color: white;
+} 
+ 
 ul {
     list-style: none;
     padding: 0;
@@ -100,19 +99,58 @@ li {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    animation: slideIn 0.3s ease-out; 
 }
 
-li:first-child {
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+li:first-child { border-top-left-radius: 6px; border-top-right-radius: 6px; }
+li:last-child { border-bottom: none; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; }
+
+
+.calculo-preview {
+    background-color: #e8f6fd;
+    border-left: 5px solid #3498db;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 4px;
+    display: none; 
+    transition: all 0.3s ease;
 }
 
-li:last-child {
-    border-bottom: none;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
+.calculo-preview h4 {
+    margin: 0 0 10px 0;
+    color: #2980b9;
+    font-size: 14px;
+    text-transform: uppercase;
 }
 
-li span {
-    font-weight: 500;
+.desglose {
+    display: flex;
+    justify-content: space-between;
+    font-family: monospace;
+    font-size: 1.1em;
+}
+
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #27ae60;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.4s ease;
+    z-index: 1000;
+}
+
+.toast.mostrar {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
